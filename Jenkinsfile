@@ -2,11 +2,10 @@ pipeline {
     agent {
         label 'AGENT-1'
     }
-      options {
+     options {
         timeout(time: 30, unit: 'MINUTES')
         disableConcurrentBuilds()
         ansiColor('xterm')
-    
     }
     stages {
         stage('Init') {
