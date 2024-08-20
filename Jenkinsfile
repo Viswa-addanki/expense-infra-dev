@@ -2,14 +2,15 @@ pipeline {
     agent {
         label 'AGENT-1'
     }
-     options {
+    options {
         timeout(time: 30, unit: 'MINUTES')
         disableConcurrentBuilds()
-        ansiColor('xterm')       
+        ansiColor('xterm')
     }
+   
     stages {
         stage('Init') {
-              steps {
+            steps {
                sh """
                 cd 01-vpc
                 terraform init -reconfigure
@@ -17,28 +18,43 @@ pipeline {
             }
         }
         stage('Plan') {
+            when {
+                expression{
+                    params.action == 'Apply'
+                }
+            }
             steps {
-                sh 'echo This is test'
+                sh """
+                cd 01-vpc
+                terraform plan
+                """
             }
         }
         stage('Deploy') {
+            when {
+                expression{
+                    params.action == 'Apply'
+                }
+            }
+            input {
+                message "Should we continue?"
+                ok "Yes, we should."
+            }
             steps {
-               sh 'echo this is deployed'
+                sh """
+                cd 01-vpc
+                terraform apply -auto-approve
+                """
             }
         }
-      
-}
 
- post { 
+        
+    }
+    post { 
         always { 
             echo 'I will always say Hello again!'
+            deleteDir()
         }
-        success { 
-            echo 'I will run when pipeline is success'
-        }
-        failure { 
-            echo 'I will run when pipeline is failure'
-        }
+        
     }
-
 }
