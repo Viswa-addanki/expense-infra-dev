@@ -27,8 +27,15 @@ pipeline {
             }
         }
         stage('Deploy') {
+            input {
+                message "Should we continue?"
+                ok "Yes, we should."
+            }
             steps {
-               sh 'echo this is deployed'
+                sh """
+                cd 01-vpc
+                terraform apply -auto-approve
+                """
             }
         }
 
