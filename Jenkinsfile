@@ -20,7 +20,10 @@ pipeline {
         }
        stage('plan') {
             steps {
-                sh 'echo This is test'
+               sh """
+                cd 01-vpc
+                terraform plan
+                """
             }
         }
         stage('Deploy') {
