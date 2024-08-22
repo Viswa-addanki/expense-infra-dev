@@ -5,6 +5,7 @@ pipeline {
     options {
         timeout(time: 30, unit: 'MINUTES')
         disableConcurrentBuilds()
+        ansiColor('xterm')
         
     }
    
@@ -17,34 +18,14 @@ pipeline {
                """
             }
         }
-        stage('Plan') {
-            when {
-                expression{
-                    params.action == 'Apply'
-                }
-            }
+       stage('plan') {
             steps {
-                sh """
-                cd 01-vpc
-                terraform plan
-                """
+                sh 'echo This is test'
             }
         }
         stage('Deploy') {
-            when {
-                expression{
-                    params.action == 'Apply'
-                }
-            }
-            input {
-                message "Should we continue?"
-                ok "Yes, we should."
-            }
             steps {
-                sh """
-                cd 01-vpc
-                terraform apply -auto-approve
-                """
+               sh 'echo this is deployed'
             }
         }
 
@@ -55,6 +36,11 @@ pipeline {
             echo 'I will always say Hello again!'
             deleteDir()
         }
-        
+          success { 
+            echo 'I will run when pipeline is success'
+        }
+        failure { 
+            echo 'I will run when pipeline is failure'
+        }
     }
 }
